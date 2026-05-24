@@ -8,10 +8,14 @@ export const appRouter = createBrowserRouter(
   [
     {
       children: [
-        { element: <Navigate replace to="/wallet" />, index: true },
+        { element: <Navigate replace to="/deck" />, index: true },
         {
           lazy: () => import('@/about/feature/about-feature'),
           path: 'about',
+        },
+        {
+          lazy: () => import('@/outlierdeck/feature/outlierdeck-feature-entry'),
+          path: 'deck',
         },
         {
           lazy: () => import('@/wallet/feature/wallet-feature'),
@@ -27,9 +31,9 @@ export const appRouter = createBrowserRouter(
                 to: '/about',
               },
               {
-                description: 'Open the wallet screen if you were looking for connection and signing tools.',
-                title: 'Wallet',
-                to: '/wallet',
+                description: 'Forge an OPOS-layered character deck and mint it as a wallet-owned MPL Core asset.',
+                title: 'OutlierDeck',
+                to: '/deck',
               },
             ],
           }),
@@ -39,6 +43,7 @@ export const appRouter = createBrowserRouter(
       element: (
         <ShellFeature
           links={[
+            { label: 'Deck', to: '/deck' },
             { label: 'Wallet', to: '/wallet' },
             { label: 'About', to: '/about' },
           ]}
