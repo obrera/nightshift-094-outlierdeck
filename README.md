@@ -9,7 +9,7 @@ Implementation agent/model: Obrera recovery coding agent, OpenAI GPT-5 Codex, me
 
 ## Product
 
-- OPOS trait layer composer with randomizer and per-trait locks.
+- OPOS trait layer composer with all 88 MIT PNG layers, randomizer, and per-trait locks.
 - Character/deck readiness, rarity, focus, tempo, synergy, and squad role preview.
 - Wallet-gated MPL Core mint panel using wallet-ui and Solana Kit.
 - First-party metadata and SVG media endpoints at `/api/outlierdeck/metadata` and `/api/outlierdeck/image`.
@@ -32,6 +32,7 @@ It intentionally does not use `@solana/web3.js`, `@solana/wallet-adapter-react`,
 - `GET /health` returns JSON health.
 - `GET /api/outlierdeck/metadata?...` returns short MPL Core JSON metadata for selected traits and owner.
 - `GET /api/outlierdeck/image?...` returns SVG media that visibly layers copied OPOS Outliers PNG trait art.
+- Missing artwork URLs return 404 instead of falling through to the SPA.
 - `/deck?...` is shareable selected trait state for the UI.
 
 ## Proof Script
@@ -75,6 +76,6 @@ The included `Dockerfile` and `docker-compose.yml` run one Bun/Hono app on port 
 
 ## OPOS Attribution
 
-OPOS Outliers trait PNG layers in `public/opos-outliers/attributes` are copied from the TipLink OPOS Outliers source art referenced at `/tmp/opos-outliers-read/public/attributes`. TipLink OPOS Outliers is MIT licensed. See `public/opos-outliers/ATTRIBUTION.md`.
+All 88 OPOS Outliers trait PNG layers in `public/opos-outliers/attributes` are copied from the TipLink OPOS Outliers source art referenced at `/tmp/opos-outliers-read/public/attributes`. TipLink OPOS Outliers is MIT licensed. See `public/opos-outliers/ATTRIBUTION.md`.
 
 The app code, routes, UI composition, metadata server, and mint flow are original to OutlierDeck 094.

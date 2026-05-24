@@ -64,6 +64,10 @@ app.get('*', async (context) => {
     return new Response(publicFile)
   }
 
+  if (filePath.startsWith('assets/') || filePath.startsWith('opos-outliers/') || /\.[a-z0-9]+$/i.test(filePath)) {
+    return context.text('Not found', 404)
+  }
+
   return new Response(Bun.file(new URL('index.html', distRoot)))
 })
 

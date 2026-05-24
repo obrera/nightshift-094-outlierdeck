@@ -1,6 +1,6 @@
 # OPOS Outliers Trait Artwork
 
-The PNG trait layers in this directory are copied from the TipLink OPOS Outliers project for Nightshift build 094.
+The 88 PNG trait layers in this directory are copied from the TipLink OPOS Outliers project for Nightshift build 094.
 
 - Source reference: `/tmp/opos-outliers-read/public/attributes`
 - Copyright: TipLink and OPOS Outliers contributors

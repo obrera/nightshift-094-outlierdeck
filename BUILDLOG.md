@@ -38,6 +38,7 @@
 | 01:14 | Found and fixed production static serving for `public/opos-outliers` PNG layers. |
 | 01:16 | Ran required gates after the server fix: `bun run lint:fix`, `bun run check-types`, and `bun run build`; all passed. |
 | 01:17 | Bounded production smoke passed on port 3187 for `/health`, `/api/outlierdeck/metadata`, `/api/outlierdeck/image`, `/deck`, and one OPOS PNG asset; server process was killed and waited. |
+| 04:41 | Recovery fix replaced the partial 72-file OPOS copy with the full 88-file MIT artwork tree, restored the original `Heads/Hair/Hair:Hat` paths, added the missing special overlay slot, URL-encoded SVG image hrefs, and changed missing static artwork routes to return 404 instead of SPA HTML. |
 
 ## Solana NFT Use Case
 

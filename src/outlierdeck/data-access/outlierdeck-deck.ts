@@ -23,6 +23,7 @@ export interface OutlierDeckAttributes {
   pants: string
   shirt: string
   shoes: string
+  special: string
 }
 
 export interface OutlierDeckMetadata {
@@ -48,6 +49,7 @@ export interface OutlierDeckParams {
   r: number
   s: number
   x: number
+  z: number
 }
 
 export interface OutlierLayer {
@@ -59,7 +61,20 @@ export interface OutlierLayer {
 export const OUTLIERDECK_ORIGIN = 'https://outlierdeck094.colmena.dev'
 
 const ASSET_ROOT = '/opos-outliers/attributes'
-const BACKGROUNDS = ['Abstract', 'Blue', 'Green', 'Purple', 'Red', 'Solana', 'TipLink', 'Yellow']
+const BACKGROUNDS = [
+  'Abstract',
+  'Blue',
+  'Green',
+  'Purple',
+  'Red',
+  'Solana',
+  'TipLink',
+  'Yellow',
+  'DAA',
+  'Grey',
+  'Pink',
+  'White',
+]
 const HEADS = ['Alien', 'Skin1', 'Skin2', 'Skin3', 'Skin4', 'Skin5', 'Zombie']
 const HAIR = [
   'BeanieBlack',
@@ -75,13 +90,30 @@ const HAIR = [
   'Pony Tail1',
   'SMB',
   'Samo',
+  'Baby',
+  'BeanieOrange',
+  'Pony Tail2',
+  'Pony Tail3',
+  'Pony Tail4',
 ]
-const FACES = ['BasicSmile', 'Cursed', 'Duck', 'LaserEyesRed', 'SolanaViper', 'Sus', 'TipLinkViper', 'Vampire', 'Visor']
+const FACES = [
+  'BasicSmile',
+  'Cursed',
+  'Duck',
+  'LaserEyesRed',
+  'SolanaViper',
+  'Sus',
+  'TipLinkViper',
+  'Vampire',
+  'Visor',
+  'Scarecrow',
+]
 const SHIRTS = ['Black', 'Blue', 'Gold', 'Green', 'Grey', 'Red', 'SolBlue', 'SolGreen', 'SolPurple', 'White']
-const LOGOS = ['3Land', 'Drift', 'Helius', 'Metaplex', 'Solana', 'TipLink']
-const PANTS = ['Blue', 'DarkGrey', 'Gold', 'Green', 'Khaki', 'LightGrey', 'Magenta', 'Red', 'Solana']
+const LOGOS = ['3Land', 'Drift', 'Helius', 'Metaplex', 'Solana', 'TipLink', 'Helium', 'Solarplex']
+const PANTS = ['Blue', 'DarkGrey', 'Gold', 'Green', 'Khaki', 'LightGrey', 'Magenta', 'Red', 'Solana', 'Brown']
 const SHOES = ['Black', 'Blue', 'Gold', 'Green', 'Grey', 'Red', 'SolBlue', 'SolGreen', 'SolPurple', 'White']
 const ROLES = ['Rift Striker', 'Vault Runner', 'Signal Medic', 'Deck Captain', 'Forge Analyst', 'Arena Scout']
+const SPECIALS = ['None', 'TippyHead', 'TippyHeadDark']
 
 export const OUTLIER_TRAITS = {
   background: BACKGROUNDS,
@@ -92,6 +124,7 @@ export const OUTLIER_TRAITS = {
   pants: PANTS,
   shirt: SHIRTS,
   shoes: SHOES,
+  special: SPECIALS,
 }
 
 export function buildOutlierDeck(seed: string): OutlierDeck {
@@ -109,6 +142,7 @@ export function buildOutlierDeckFromParams(params: OutlierDeckParams): OutlierDe
     pants: PANTS[safeParams.p] ?? PANTS[0],
     shirt: SHIRTS[safeParams.s] ?? SHIRTS[0],
     shoes: SHOES[safeParams.r] ?? SHOES[0],
+    special: SPECIALS[safeParams.z] ?? SPECIALS[0],
   }
   const deckHash = getOutlierDeckHash(attributes)
   const rareSignals = [
@@ -125,6 +159,7 @@ export function buildOutlierDeckFromParams(params: OutlierDeckParams): OutlierDe
     attributes.shirt === 'Gold',
     attributes.pants === 'Solana',
     attributes.shoes === 'Gold',
+    attributes.special !== 'None',
   ].filter(Boolean).length
   const brandMatch =
     Number(attributes.background === 'Solana') +
@@ -177,6 +212,7 @@ export function createOutlierDeckMetadata(deck: OutlierDeck, owner: string): Out
       { trait_type: 'Head', value: deck.attributes.head },
       { trait_type: 'Hair', value: deck.attributes.hair },
       { trait_type: 'Face', value: deck.attributes.face },
+      { trait_type: 'Special', value: deck.attributes.special },
       { trait_type: 'Shirt', value: deck.attributes.shirt },
       { trait_type: 'Logo', value: deck.attributes.logo },
       { trait_type: 'Rarity Score', value: deck.rarity },
@@ -208,6 +244,7 @@ export function createOutlierDeckParams(seed: string): OutlierDeckParams {
     r: Math.floor(random() * SHOES.length),
     s: Math.floor(random() * SHIRTS.length),
     x: Math.floor(random() * HEADS.length),
+    z: Math.floor(random() * SPECIALS.length),
   }
 }
 
@@ -222,6 +259,7 @@ export function createOutlierDeckQueryString(params: OutlierDeckParams, owner?: 
     r: safeParams.r.toString(10),
     s: safeParams.s.toString(10),
     x: safeParams.x.toString(10),
+    z: safeParams.z.toString(10),
   })
 
   if (owner) {
@@ -234,7 +272,7 @@ export function createOutlierDeckQueryString(params: OutlierDeckParams, owner?: 
 export function createOutlierDeckSvg(deck: OutlierDeck) {
   const images = deck.layers
     .map((layer) => {
-      const href = `${OUTLIERDECK_ORIGIN}${layer.path}`
+      const href = encodeURI(`${OUTLIERDECK_ORIGIN}${layer.path}`)
       return `<image href="${escapeXml(href)}" x="0" y="0" width="1000" height="1000" preserveAspectRatio="xMidYMid meet" />`
     })
     .join('')
@@ -243,13 +281,14 @@ export function createOutlierDeckSvg(deck: OutlierDeck) {
 }
 
 export function getOutlierDeckHash(attributes: OutlierDeckAttributes) {
-  const stable = JSON.stringify(attributes)
+  const { special, ...baseAttributes } = attributes
+  const stable = JSON.stringify(special === 'None' ? baseAttributes : attributes)
   return Math.abs(hashNumber(stable)).toString(36).toUpperCase().padStart(8, '0')
 }
 
 export function parseOutlierDeckParams(searchParams: URLSearchParams): null | OutlierDeckParams {
-  const keys = ['b', 'f', 'h', 'l', 'p', 'r', 's', 'x'] as const
-  const values = Object.fromEntries(keys.map((key) => [key, Number(searchParams.get(key))]))
+  const keys = ['b', 'f', 'h', 'l', 'p', 'r', 's', 'x', 'z'] as const
+  const values = Object.fromEntries(keys.map((key) => [key, Number(searchParams.get(key) ?? '0')]))
 
   if (keys.some((key) => !Number.isFinite(values[key]))) {
     return null
@@ -283,7 +322,15 @@ function createOutlierLayers(attributes: OutlierDeckAttributes): OutlierLayer[] 
     { label: 'logo', path: `${ASSET_ROOT}/Torso/Logos/${attributes.logo}.png`, value: attributes.logo },
     { label: 'head', path: `${ASSET_ROOT}/Heads/Color/${attributes.head}.png`, value: attributes.head },
     { label: 'face', path: `${ASSET_ROOT}/Heads/Faces/${attributes.face}.png`, value: attributes.face },
-    { label: 'hair', path: `${ASSET_ROOT}/Heads/Hair/${attributes.hair}.png`, value: attributes.hair },
+    { label: 'hair', path: `${ASSET_ROOT}/Heads/Hair/Hair:Hat/${attributes.hair}.png`, value: attributes.hair },
+    {
+      label: 'special',
+      path:
+        attributes.special === 'None'
+          ? `${ASSET_ROOT}/None.png`
+          : `${ASSET_ROOT}/Heads/Special/${attributes.special}.png`,
+      value: attributes.special,
+    },
   ]
 }
 
@@ -318,6 +365,7 @@ function sanitizeOutlierDeckParams(params: OutlierDeckParams): OutlierDeckParams
     r: clamp(Math.round(params.r), 0, SHOES.length - 1),
     s: clamp(Math.round(params.s), 0, SHIRTS.length - 1),
     x: clamp(Math.round(params.x), 0, HEADS.length - 1),
+    z: clamp(Math.round(params.z), 0, SPECIALS.length - 1),
   }
 }
 

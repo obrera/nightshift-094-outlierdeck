@@ -18,6 +18,7 @@ const ROWS: Array<{ key: keyof OutlierDeckParams; label: string; values: string[
   { key: 'x', label: 'Head', values: OUTLIER_TRAITS.head },
   { key: 'h', label: 'Hair', values: OUTLIER_TRAITS.hair },
   { key: 'f', label: 'Face', values: OUTLIER_TRAITS.face },
+  { key: 'z', label: 'Special', values: OUTLIER_TRAITS.special },
   { key: 's', label: 'Shirt', values: OUTLIER_TRAITS.shirt },
   { key: 'l', label: 'Logo', values: OUTLIER_TRAITS.logo },
   { key: 'p', label: 'Pants', values: OUTLIER_TRAITS.pants },
